@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>视频播放</title>
+    <!--字体图标库-->
+    <link rel="stylesheet" href="css/font-awesome.css" />
+    <link rel="stylesheet" href="css/player.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h2>视频播放器</h2>
+        <div class="player">
+            <video src="./video/fun.mp4"></video>
+            <div class="controls">
+                <!--播放/暂停-->
+                <a href="javascript:void(0);" class="switch fa fa-play"></a>
+                <!--播放进度-->
+                <div class="progress">
+                    <!-- 线 -->
+                    <div class="line"></div>
+                    <!-- 滑块 -->
+                    <div class="bar"></div>
+                </div>
+                <!--当前播放时间/播放总时长-->
+                <div class="timer">
+                    <span class="current">00:00:00</span> / <span class="total">00:00:00</span>
+                </div>
+                <!--全屏/取消全屏-->
+                <a href="javascript:void(0);" class="expand fa fa-arrows-alt"></a>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/jquery.min.js"></script>
+    <script>
+        var line = document.querySelector(".line");
+        var play = document.querySelector(".player")
+        var video = document.querySelector("video");
+        var player = document.querySelector(".controls>a:nth-child(1)");
+        var current = document.querySelector(".current");
+        var total = document.querySelector(".total")
+        var expand = document.querySelector(".expand");
+        // 全屏，取消全屏
+        expand.onclick = function () {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+                this.className = "expand fa fa-arrows-alt"
+            } else {
+                play.requestFullscreen()
+                this.className = "expand fa fa-compress"
+            }
+
+        }
+        //视频加载完成
+        video.oncanplay = function () {
+            console.log(1)
+            this.style.display = "block";
+            this.parentNode.style.background = "#000";
+            var currentTime = getTime(this.currentTime);
+            var totalTime = getTime(this.duration);
+            current.innerHTML = currentTime
+            total.innerHTML = totalTime
+            //视频播放时
+            video.ontimeupdate = function () {
+                var currentTime = getTime(this.currentTime);
+                var totalTime = getTime(this.duration);
+                current.innerHTML = currentTime
+                total.innerHTML = totalTime
+                line.style.width = (this.currentTime / this.duration) * 100 + "%"
+            }
+            // 暂停播放
+            player.onclick = function () {
+                if (video.paused) {
+                    video.play();
+                    this.className = "switch fa fa-pause"
+                } else {
+                    video.pause();
+                    this.className = "switch fa fa-play"
+                }
+            }
+        }
+        // 时间格式化
+        function getTime(time) {
+            var hour = parseInt(time / 60 / 60);
+            var minute = parseInt(time / 60 % 60);
+            var second = parseInt(time % 60);
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+            if (minute < 10) {
+                minute = "0" + minute;
+            }
+            if (second < 10) {
+                second = "0" + second;
+            }
+            return hour + ":" + minute + ":" + second
+        }
+
+    </script>
+</body>
+
+</html>
